@@ -45,5 +45,23 @@ select{
   color: gray;
 }
 .logoSmall {
-  width: 100px;
+  width: 150px;
+}
+
+.green {
+  color: green;
+  font-size: 100px;
+  box-shadow: 0px 0px 10px green; 
+  border-radius: 50px;
+}
+
+.red {
+  color: red;
+  font-size: 100px;
+  box-shadow: 0px 0px 10px red; 
+  border-radius: 50px;
+}
+
+.gray {
+  color: rgb(49, 49, 49);
 }

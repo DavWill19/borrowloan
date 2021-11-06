@@ -17,6 +17,7 @@ class Login extends React.Component {
 
             username: "Wendys Employee",
             password: "",
+            store: "",
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,42 +31,41 @@ class Login extends React.Component {
     }
 
     handleSubmit() {
+        //     fetch("https://wenventurefeedback.herokuapp.com/users/login", {
+        //         method: "POST",
+        //         headers: {
+        //             credentials: 'same-origin',
+        //             Accept: "application/json, text/plain, */*",
+        //             'Content-Type': 'application/json',
+        //             mode: "cors"
+        //         },
+        //         body: JSON.stringify({
+        //             username: this.state.username,
+        //             password: this.state.password,
+        //         }),
+        //     })
+        //         .then(res => res.json())
+        //         .then(res => {
+        //             console.log(res);
+        //             let inMemoryToken = res.token;
+        //             if (res.success) {
+        //                 localStorage.setItem('token', res.token);
+        //                 localStorage.setItem('user', JSON.stringify(res.user));
+        //                 console.log(res);
+        //                 this.props.history.push('/dashboard');
+        //             } else {
+        //                 alert("Invalid username or password");
+        //             }
+        //             console.log(inMemoryToken);
+        //             // { Authorization: `Bearer  ${ inMemoryToken }`; }
+        //             return inMemoryToken;
+        //         })
+        //         .catch(err => alert("Invalid username or password"));
 
-    //     fetch("https://wenventurefeedback.herokuapp.com/users/login", {
-    //         method: "POST",
-    //         headers: {
-    //             credentials: 'same-origin',
-    //             Accept: "application/json, text/plain, */*",
-    //             'Content-Type': 'application/json',
-    //             mode: "cors"
-    //         },
-    //         body: JSON.stringify({
-    //             username: this.state.username,
-    //             password: this.state.password,
-    //         }),
-    //     })
-    //         .then(res => res.json())
-    //         .then(res => {
-    //             console.log(res);
-    //             let inMemoryToken = res.token;
-    //             if (res.success) {
-    //                 localStorage.setItem('token', res.token);
-    //                 localStorage.setItem('user', JSON.stringify(res.user));
-    //                 console.log(res);
-    //                 this.props.history.push('/dashboard');
-    //             } else {
-    //                 alert("Invalid username or password");
-    //             }
-    //             console.log(inMemoryToken);
-    //             // { Authorization: `Bearer  ${ inMemoryToken }`; }
-    //             return inMemoryToken;
-    //         })
-    //         .catch(err => alert("Invalid username or password"));
 
-
-    //     console.log(JSON.stringify(this.state));
-    this.props.history.push('/dashboard', { username: this.state.username });
-    console.log(JSON.stringify(this.state));
+        //     console.log(JSON.stringify(this.state));
+        this.props.history.push('/dashboard', { username: this.state.username });
+        console.log(JSON.stringify(this.state));
     }
 
 
@@ -105,4 +105,4 @@ class Login extends React.Component {
 
 
 
-export default withRouter (Login);
+export default withRouter(Login);
