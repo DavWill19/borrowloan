@@ -1,0 +1,49 @@
+img {
+  width: 500px;
+}
+
+select{
+  text-align-last:center;
+  direction: center;
+}
+
+.logo {
+  width: 60%;
+  margin-top: 5px;
+}
+
+.logo2 {
+  width: 150px;
+}
+
+.form-group {
+  margin: 35px;
+}
+
+.question {
+  font-size: 25px;
+  font-weight:500;
+}
+
+.leadership {
+  font-size: 20px;
+  font-weight:500;
+  color: black;
+}
+
+.hide {
+  display: none;
+}
+
+.contact {
+  width: 200px;
+  margin: 20px;
+}
+
+.link {
+  text-decoration: none;
+  color: gray;
+}
+.logoSmall {
+  width: 100px;
+}
