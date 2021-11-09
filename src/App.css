@@ -2,8 +2,8 @@ img {
   width: 500px;
 }
 
-select{
-  text-align-last:center;
+select {
+  text-align-last: center;
   direction: center;
 }
 
@@ -22,12 +22,12 @@ select{
 
 .question {
   font-size: 25px;
-  font-weight:500;
+  font-weight: 500;
 }
 
 .leadership {
   font-size: 20px;
-  font-weight:500;
+  font-weight: 500;
   color: black;
 }
 
@@ -45,23 +45,41 @@ select{
   color: gray;
 }
 .logoSmall {
-  width: 150px;
+  width: 120px;
 }
 
 .green {
   color: green;
   font-size: 100px;
-  box-shadow: 0px 0px 10px green; 
+  box-shadow: 0px 0px 10px green;
   border-radius: 50px;
 }
 
+.card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px gray;
+}
 .red {
   color: red;
   font-size: 100px;
-  box-shadow: 0px 0px 10px red; 
+  box-shadow: 0px 0px 10px red;
   border-radius: 50px;
 }
 
 .gray {
   color: rgb(49, 49, 49);
 }
+
+.icon {
+  color: rgb(75, 75, 75);
+  font-size: 100px;
+}
+
+.card {
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgb(75, 75, 75);
+  transition: 0.3s;
+  width: 400px;
+  margin: auto;
+}
+
