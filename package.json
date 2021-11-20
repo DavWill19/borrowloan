@@ -11,6 +11,8 @@
     "concurrently": "^6.3.0",
     "cra-template": "1.1.2",
     "electron": "^15.3.0",
+    "electron-fetch": "^1.7.4",
+    "history": "^5.1.0",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.2",
     "react-dom": "^17.0.2",

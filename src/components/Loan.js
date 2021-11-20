@@ -2,7 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css';
 import {
-    Col, Row, FormGroup, Input, Button, Form, Collapse,
+    Col, Row, FormGroup, Input, Button, Collapse, Form,
     Navbar,
     NavbarToggler,
     NavbarBrand,
@@ -12,13 +12,12 @@ import {
     UncontrolledDropdown,
     DropdownToggle,
     DropdownMenu,
-    DropdownItem,
-    Label
+    DropdownItem
 } from 'reactstrap';
 import { Card } from 'react-bootstrap';
 import 'animate.css';
 import { withRouter, Link } from "react-router-dom";
-import { faArrowCircleDown, faArrowAltCircleUp, faUserCircle, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
+import { faArrowAltCircleDown, faArrowCircleUp, faUserCircle, faClipboardList, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -26,10 +25,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 
-class Borrow extends React.Component {
+class Loan extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+
             username: localStorage.getItem('username'),
             isOpen: false,
             store: '',
@@ -59,16 +59,18 @@ class Borrow extends React.Component {
     }
 
     handleSubmit(e) {
+
         var templateParams = {
-            borrowStore: `${this.state.username}`,
+            message: `${this.state.username} loaned ${this.state.item} to ${this.state.store}`,
+            borrowStore: `${this.state.store}`,
             name: `${this.state.name}`,
-            loanStore: `${this.state.store}`,
+            loanStore: `${this.state.username}`,
             acknowledged: false,
             item: `${this.state.item}`,
             case: `${this.state.case}`,
             bag: `${this.state.bag}`,
             individual: `${this.state.individual}`,
-            visible: false,
+            isVisible: false,
 
         }
 
@@ -78,49 +80,50 @@ class Borrow extends React.Component {
         //     }, function (error) {
         //       console.log('FAILED...', error);
         //     });
+
         if (this.state.store && this.state.name && this.state.item) {
             this.setState({
                 visible: true,
             });
             setTimeout(() => {
                 e.preventDefault();
-            window.fetch('https://wenventurefeedback.herokuapp.com/borrow', {
-                method: "POST",
-                headers: {
-                    credentials: "same-origin",
-                    Accept: "application/json, text/plain, */*",
-                    "Content-Type": "application/json",
-                    mode: "cors"
-                },
-                body: JSON.stringify({
-                    borrowStore: `${this.state.username}`,
-                    name: `${this.state.name}`,
-                    loanStore: `${this.state.store}`,
-                    acknowledged: false,
-                    item: `${this.state.item}`,
-                    case: `${this.state.case}`,
-                    bag: `${this.state.bag}`,
-                    individual: `${this.state.individual}`
+                window.fetch('https://wenventurefeedback.herokuapp.com/borrow', {
+                    method: "POST",
+                    headers: {
+                        credentials: "same-origin",
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json",
+                        mode: "cors"
+                    },
+                    body: JSON.stringify({
+                        borrowStore: `${this.state.store}`,
+                        name: `${this.state.name}`,
+                        loanStore: `${this.state.username}`,
+                        acknowledged: false,
+                        item: `${this.state.item}`,
+                        case: `${this.state.case}`,
+                        bag: `${this.state.bag}`,
+                        individual: `${this.state.individual}`
 
-                }),
-            }).then(console.log())
-                .then((result) => {
-                    return result.json();
-                })
-                .then((result) => {
-                    console.log('Form created successfully!', result);
-                })
-                .catch((err) => {
-                    console.error('An error happened', err);
-                });
-            alert(`You borrowed ${this.state.item} from ${this.state.store}` );
-            this.props.history.push('/borrow');
-            window.location.reload();
-        }, 650);
-    } else {
-        alert('Please fill in all fields');
+                    }),
+                }).then(console.log())
+                    .then((result) => {
+                        return result.json();
+                    })
+                    .then((result) => {
+                        console.log('Form created successfully!', result);
+                    })
+                    .catch((err) => {
+                        console.error('An error happened', err);
+                    });
+                alert(`You loaned ${this.state.item} to ${this.state.store}`);
+                this.props.history.push('/loan');
+                window.location.reload();
+            }, 650);
+        } else {
+            alert('Please fill in all fields');
+        }
     }
-}
 
     render() {
         return (
@@ -131,6 +134,7 @@ class Borrow extends React.Component {
                             <img className="logoSmall text-center animate__animated animate__pulse animate__infinite infinite" alt="wendy" src="../images/wendysLogo.png" />
                         </Link>
                     </NavbarBrand>
+                    {/* <NavbarBrand><Link to="/dashboard">Dashboard </Link></NavbarBrand> */}
                     <NavbarToggler onClick={this.toggle} />
                     <Collapse isOpen={this.state.isOpen} navbar>
                         <Nav className="ml-auto" navbar>
@@ -138,10 +142,10 @@ class Borrow extends React.Component {
                                 <Link to="/dashboard"><NavLink>Dashboard</NavLink></Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/borrow"><NavLink className="activeUnderline">Borrow</NavLink></Link>
+                                <Link to="/borrow"><NavLink>Borrow</NavLink></Link>
                             </NavItem>
                             <NavItem>
-                                <Link to="/loan"><NavLink>Loan</NavLink></Link>
+                                <Link to="/loan"><NavLink className="activeUnderline">Loan</NavLink></Link>
                             </NavItem>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav caret>
@@ -173,16 +177,13 @@ class Borrow extends React.Component {
                 </Navbar>
                 <header>
                     <hr className="display-3" />
-                    <h2 className="text-center animate__animated animate__fadeIn" ><FontAwesomeIcon className="gray" icon={faArrowCircleDown} /> Borrow</h2>
+                    <h2 className="text-center animate__animated animate__fadeIn" ><FontAwesomeIcon className="gray" icon={faArrowCircleUp} /> Loan</h2>
                     <hr className="display-3" />
                 </header>
                 <Col className="halfWidth mx-auto shadow animate__animated animate__fadeIn">
                     <FormGroup className="p-2">
-                        <div className="text-center">
-                            <PopUpBox visible={this.state.visible} />
-                        </div>
                         <Form>
-                            <h3 className="text-center">Select location to borrow from:</h3>
+                            <h3 className="text-center">Select location to loan to:</h3>
                             <Col className="mx-auto" xs="12">
                                 <Input required onChange={this.handleChange} className="text-center" type="select" name="store" id="Select">
                                     <option value="" disabled selected>Choose a location</option>
@@ -200,8 +201,8 @@ class Borrow extends React.Component {
                                     <option name="Punxsutawney" value="Punxy31">Punxsutawney</option>
                                 </Input>
                             </Col>
-                            <h3 className="text-center">Item being borrowed:</h3>
-                            <Input rows="1" type="text" id="item" name="item" placeholder="Enter Item" className="mx-auto text-center"
+                            <h3 className="text-center">Item being loaned:</h3>
+                            <Input required rows="1" type="text" id="item" name="item" placeholder="Enter Item" className="mx-auto text-center"
                                 onChange={this.handleChange}
                             />
                             <h3 className="text-center">Enter quantity:</h3>
@@ -213,23 +214,26 @@ class Borrow extends React.Component {
                                         />
                                     </Col>
                                     <Col>
-                                        <Input rows="1" type="text" id="case" name="bag" placeholder="Bag" className="mx-auto text-center contact"
+                                        <Input rows="1" type="text" id="case" name="case" placeholder="Bag" className="mx-auto text-center contact"
                                             onChange={this.handleChange}
                                         />
                                     </Col>
                                     <Col>
-                                        <Input rows="1" type="text" id="case" name="individual" placeholder="Individual" className="mx-auto text-center contact"
+                                        <Input rows="1" type="text" id="case" name="case" placeholder="Individual" className="mx-auto text-center contact"
                                             onChange={this.handleChange}
                                         />
                                     </Col>
                                 </Row>
+                                <div className="text-center">
+                                    <PopUpBox visible={this.state.visible} />
+                                </div>
                             </div>
                             <h3 className="text-center">Your name:</h3>
-                            <Input rows="1" type="text" id="name" name="name" placeholder="Please enter your name" className="mx-auto text-center"
+                            <Input required rows="1" type="text" id="name" name="name" placeholder="Please enter your name" className="mx-auto text-center"
                                 onChange={this.handleChange}
                             />
                             <div className="text-center p-4">
-                                <Button className="mx-auto shadow" color="danger" onClick={this.handleSubmit}>Borrow Item</Button>
+                                <Button className="mx-auto shadow" color="success" onClick={this.handleSubmit}>Loan Item</Button>
                             </div>
                         </Form>
                     </FormGroup>
@@ -243,13 +247,6 @@ class Borrow extends React.Component {
     };
 }
 
-export default withRouter(Borrow);
-
-
-
-
-
-
 function PopUpBox(props) {
     if (!props.visible) {
         return null;
@@ -257,7 +254,9 @@ function PopUpBox(props) {
 
     return (
         <div className="text-center">
-            <FontAwesomeIcon className="box animate__animated animate__backOutDown" icon={faBoxOpen} />
+            <FontAwesomeIcon className="box animate__animated animate__backOutUp" icon={faBoxOpen} />
         </div>
     )
 }
+
+export default withRouter(Loan);

@@ -45,7 +45,7 @@ select {
   color: gray;
 }
 .logoSmall {
-  width: 120px;
+  width: 60px;
 }
 
 .green {
@@ -82,4 +82,40 @@ select {
   width: 400px;
   margin: auto;
 }
+.row {
+  height: 40%!important;
+}
 
+a {
+  text-decoration:none!important;
+  color:rgb(29, 29, 29)!important;
+}
+header {
+  padding-top: 80px;
+}
+.user {
+  font-size: 15px
+}
+.halfWidth {
+  width: 60%;
+}
+
+.activeUnderline {
+  border-bottom: 1px solid #e64438;
+  border-width: 2px;
+}
+
+.redcolor {
+  color: red;
+}
+
+.box {
+  position: fixed;
+  color: rgb(207, 137, 87);
+  font-size: 150px;
+  margin-left: -94px!important;
+  justify-content: center;
+}
+.newIcon {
+  width: 50px
+}

@@ -1,22 +1,22 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css';
-import { Col, FormGroup, Input, Button } from 'reactstrap';
+import { Col, FormGroup, Input, Button, Label } from 'reactstrap';
 import 'animate.css';
-import { withRouter, Link } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             username: this.props.username,
+            password: this.props.password,
+            isLoggedIn: false,
         }
     };
 
 
-    render() {
-        console.log(this.props.username);
-
+    render() {     
         return (
             <div>
                 <Col className="mx-auto text-center" xs="10" lg="6">
@@ -25,7 +25,6 @@ class Login extends React.Component {
                 <h1 className="display-3 text-center animate__animated animate__backInRight">Borrow & Loan</h1>
                 <hr className="display-3" />
                 <h2 className="text-center animate__animated animate__backInLeft" >Login</h2>
-                <p className="lead">
                     <hr className="display-3" />
                     <form name='login' className="text-center" onSubmit={this.props.handleSubmit} >
                         <FormGroup className="mx-auto animate__animated animate__fadeIn text-center form-group question contact">
@@ -36,14 +35,15 @@ class Login extends React.Component {
                                 onChange={this.props.handleChange}
                             />
                         </FormGroup>
-                        <footer>
-                            <Link to={"/dashboard"}>
-                                <Button className="animate__animated animate__fadeIn" color="danger" type="submit" >Login</Button>
-                            </Link>
-                        </footer>
+                        
+                            <Button className="animate__animated animate__fadeIn" color="danger" type="submit" >Login</Button>
+                        
                     </form>
-                </p>
-                <p className="text-center">Login with your store name and password</p>
+                <h5 className="text-center mb-5">Login with your store name and password</h5>
+                <hr className="display-3" />
+                <footer className="mt-5">
+                    <p className="text-center mt-5 gray">2021 &copy; DevWilliams Software. All rights reserved.</p>
+                </footer>
             </div>
         );
     };

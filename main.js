@@ -8,8 +8,8 @@ let window, tray
 function createWindow () {
   // Create the browser window.
   window = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1270,
+    height: 800,
     show: true,
     frame: true,
     fullscreenable: false,
@@ -17,7 +17,11 @@ function createWindow () {
     resizable: true,
     icon: 'public/favicon.ico',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      enableRemoteModule: true, //this must be true
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: false,
     }
   })
 
@@ -61,6 +65,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
-
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
