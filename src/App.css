@@ -49,9 +49,9 @@ select {
 }
 
 .green {
-  color: green;
+  color: #19875d;
   font-size: 100px;
-  box-shadow: 0px 0px 10px green;
+  box-shadow: 0px 0px 10px #19875d;
   border-radius: 50px;
 }
 
@@ -60,14 +60,22 @@ select {
   box-shadow: 0 0 10px gray;
 }
 .red {
-  color: red;
+  color: #e64438;
   font-size: 100px;
-  box-shadow: 0px 0px 10px red;
+  box-shadow: 0px 0px 10px #e64438;
   border-radius: 50px;
 }
 
 .gray {
   color: rgb(49, 49, 49);
+}
+
+.greenColor {
+  color: #19875d;
+}
+
+.redColor {
+  color: #e64438;
 }
 
 .icon {
@@ -83,18 +91,18 @@ select {
   margin: auto;
 }
 .row {
-  height: 40%!important;
+  height: 40% !important;
 }
 
 a {
-  text-decoration:none!important;
-  color:rgb(29, 29, 29)!important;
+  text-decoration: none !important;
+  color: rgb(29, 29, 29) !important;
 }
 header {
   padding-top: 80px;
 }
 .user {
-  font-size: 15px
+  font-size: 15px;
 }
 .halfWidth {
   width: 60%;
@@ -113,9 +121,44 @@ header {
   position: fixed;
   color: rgb(207, 137, 87);
   font-size: 150px;
-  margin-left: -94px!important;
+  margin-left: -94px !important;
   justify-content: center;
 }
 .newIcon {
-  width: 50px
+  width: 50px;
+}
+
+a {
+  cursor: default !important;
+}
+button {
+  cursor: default !important;
+}
+/* .nav-item { 
+  transition: all .5s ease-in-out; 
+}
+.nav-item :hover {
+  transform: scale(1.01);
+} */
+.flag {
+  color: #e64438;
+  padding-right: 5px;
+  font-size: 20px;
+}
+
+.yellowHighlight {
+  background-color: #cce638 !important;
+  font-size: 15px !important;
+}
+.greenHighlight {
+  background-color: #46e638 !important;
+  font-size: 15px !important;
+}
+
+.bold {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+body {
+  background: linear-gradient(#fdfdfd, #f5f4f4) !important;
 }

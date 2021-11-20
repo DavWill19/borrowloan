@@ -2,7 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css';
 import {
-    Col, Row, FormGroup, Input, Button, Collapse,
+    Col, Row, Collapse,
     Navbar,
     NavbarToggler,
     NavbarBrand,
@@ -17,9 +17,9 @@ import {
 import { Card } from 'react-bootstrap';
 import 'animate.css';
 import { withRouter, Link, } from "react-router-dom";
-import { faArrowAltCircleDown, faArrowAltCircleUp, faUserCircle, faClipboardList, faHistory, faBars } from '@fortawesome/free-solid-svg-icons'
+import { faArrowAltCircleDown, faArrowAltCircleUp, faUserCircle, faClipboardList, faHistory, faBars, faBell } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import ReactTooltip from 'react-tooltip';
 
 
 
@@ -38,6 +38,7 @@ class Dashboard extends React.Component {
             history: [],
             newBorrow: [],
             newLoan: [],
+            new: false,
         }
         this.handleChange = this.handleChange.bind(this);
         this.toggle = this.toggle.bind(this);
@@ -75,9 +76,9 @@ class Dashboard extends React.Component {
 
                 const history = result.filter(history => history.borrowStore === `${this.state.username}` || history.loanStore === `${this.state.username}`);
                 this.setState({ history: history })
-                const borrowed = history.filter(borrowed => borrowed.borrowStore === `${this.state.username}` && borrowed.repaid === false);
+                const borrowed = history.filter(borrowed => borrowed.borrowStore === `${this.state.username}` && borrowed.acknowledged === false);
                 this.setState({ borrowed: borrowed })
-                const loaned = history.filter(loaned => loaned.loanStore === `${this.state.username}` && loaned.repaid === false);
+                const loaned = history.filter(loaned => loaned.loanStore === `${this.state.username}` && loaned.acknowledged === false);
                 this.setState({ loaned: loaned })
                 // console.log('Borrowed:', this.state.borrowed);
                 // console.log('Loaned:', this.state.loaned);
@@ -87,32 +88,26 @@ class Dashboard extends React.Component {
                 this.setState({ newBorrow: newBorrow });
                 console.log('NewBorrow:', this.state.newBorrow);
                 console.log('NewLoan:', this.state.newLoan);
+                let myLoanNotification = () => {
+                    if (this.state.borrowed.length > 0) {
+                        this.setState({ new: true });
+                        new window.Notification(`New Borrow!`, {
+                            body: `Click to see your list!`,
+                            icon: ('../images/favicon.ico')
+                        }
+                        ).onclick = () => {
+                            this.props.history.push('/mylist');
+                        }
+                    } else {
+                        console.log("no new borrow")
+                    }
+                }
+                myLoanNotification();
 
             })
             .catch((err) => {
                 console.error('An error happened', err);
             });
-        //.map(report => (
-
-
-
-
-        let myLoanNotification = () => {
-            if (this.state.newLoan.length > -1 || this.state.newBorrow.length > -1) {
-                new window.Notification(`New Borrow or Loan!`, {
-                    body: `Click to see your list!`,
-                    icon: ('../images/favicon.ico')
-                }
-                ).onclick = () => {
-                    this.props.history.push('/mylist');
-                }
-            } else {
-                console.log("no new loan")
-            }
-        }
-        myLoanNotification();
-    
-
 
     }
 
@@ -139,6 +134,9 @@ class Dashboard extends React.Component {
                             </NavItem>
                             <UncontrolledDropdown nav inNavbar>
                                 <DropdownToggle nav caret>
+                                    <Link data-tip="New Borrow!" data-delay-show='500' data-background-color="#e64438" to="/mylist">
+                                        <NewIcon new={this.state.new} />
+                                    </Link>
                                     My Reports
                                 </DropdownToggle>
                                 <DropdownMenu right>
@@ -162,7 +160,10 @@ class Dashboard extends React.Component {
                         </Nav>
                     </Collapse>
                     <div className="text-end">
-                        <h5 className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        <ReactTooltip />
+                        <Link to="/">
+                            <h5 data-delay-show='500' data-background-color="#e64438" data-tip="Log Out" className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        </Link>
                     </div>
                 </Navbar>
                 <header>
@@ -226,7 +227,13 @@ class Dashboard extends React.Component {
     };
 }
 
-
+function NewIcon(props) {
+    if (props.new) {
+        return <FontAwesomeIcon className="flag" icon={faBell} />
+    } else {
+        return null
+    }
+}
 
 
 

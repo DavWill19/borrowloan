@@ -2,7 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css';
 import {
-    Col, Row, FormGroup, Input, Button, Collapse,
+    Col, Row, Collapse,
     Navbar,
     NavbarToggler,
     NavbarBrand,
@@ -14,12 +14,11 @@ import {
     DropdownMenu,
     DropdownItem
 } from 'reactstrap';
-import { Card } from 'react-bootstrap';
 import 'animate.css';
 import { withRouter, Link } from "react-router-dom";
-import { faArrowAltCircleDown, faArrowAltCircleUp, faUserCircle, faClipboardList, faHistory } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faHistory } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import ReactTooltip from 'react-tooltip';
 
 class History extends React.Component {
     constructor(props) {
@@ -65,7 +64,7 @@ class History extends React.Component {
         return (
             <div className="container">
                 <Navbar sticky-top color="light" light expand="sm" fixed="top">
-                <NavbarBrand >
+                    <NavbarBrand >
                         <Link to="/dashboard">
                             <img className="logoSmall text-center animate__animated animate__pulse animate__infinite infinite" alt="wendy" src="../images/wendysLogo.png" />
                         </Link>
@@ -107,7 +106,10 @@ class History extends React.Component {
                         </Nav>
                     </Collapse>
                     <div className="text-end">
-                        <h5 className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        <ReactTooltip />
+                        <Link to="/">
+                            <h5 data-delay-show='500' data-background-color="#e64438" data-tip="Log Out" className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        </Link>
                     </div>
                 </Navbar>
                 <header>
@@ -116,21 +118,21 @@ class History extends React.Component {
                     <hr className="display-3" />
                 </header>
                 <div className="container">
-                <Row className="animate__animated animate__fadeIn">
+                    <Row className="animate__animated animate__fadeIn">
                         <Col>
-                        <h3 className="text-center"> Borrowed</h3>
-                        <hr />
+                            <h3 className="text-center"> Borrowed</h3>
+                            <hr />
                             <Borrow borrowed={this.state.borrowed} />
                         </Col>
                         <Col>
-                        <h3 className="text-center">Loaned</h3>
-                        <hr />
+                            <h3 className="text-center">Loaned</h3>
+                            <hr />
                             <Loan loaned={this.state.loaned} />
                         </Col>
                     </Row>
                 </div>
                 <footer>
-                <p className="text-center mt-5 gray">2021 &copy; DevWilliams Software. All rights reserved.</p>
+                    <p className="text-center mt-5 gray">2021 &copy; DevWilliams Software. All rights reserved.</p>
                 </footer>
             </div>
         );
@@ -140,10 +142,10 @@ class History extends React.Component {
 function Borrow(props) {
     function returnedItem(time, repaid) {
         if (repaid) {
-             { new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(time))) }
-        
+            return (<p className="text-center greenHighlight">Returned: {time}</p>)
+
         } else {
-            return null;
+            return <p className="text-center yellowHighlight">Item has not been returned</p>;
         }
     }
     if (props.borrowed) {
@@ -151,23 +153,21 @@ function Borrow(props) {
             <div className="container">
                 {props.borrowed.slice(0).reverse().map(report => (
                     <div className="p-1">
-                    <div  key={report.createdAt}>
-                        <div >
-                            <h6>{report.store}</h6>
-                            <p className="mb-2 text-center text-danger">{report.item} from {report.loanStore}</p>
-                            <p className="text-center"> Quantity: </p>
-                            <p className="text-center">Case: {report.case}</p>
-                            <p className="text-center">Bag: {report.bag}</p>
-                            <p className="text-center">Individual: {report.individual}</p>
-                            <hr></hr>
-                            <p className="text-center redcolor">Acknowledged: {JSON.stringify(report.acknowledged)}</p>
-                            <p className="text-center redcolor">Returned: {JSON.stringify(report.repaid)}</p>
-                            <p className="text-center">Updated: {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.updatedAt)))}</p>
-                            <hr></hr>
-                            <p className="text-center">Borrowed by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                        <div key={report.createdAt}>
+                            <div >
+                                <h6>{report.store}</h6>
+                                <p className="mb-2 text-center bold text-danger">Borrowed: {report.item} from {report.loanStore}</p>
+                                <hr />
+                                <p className="text-center bold"> Quantity: </p>
+                                <p className="text-center">Case: {report.case}</p>
+                                <p className="text-center">Bag: {report.bag}</p>
+                                <p className="text-center">Individual: {report.individual}</p>
+                                <p className="text-center">Received Notification: {JSON.stringify(report.acknowledged)}</p>
+                                {returnedItem(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt))), report.repaid)}
+                                <p className="text-center bold">Borrowed by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                            </div>
                         </div>
-                    </div>
-                    <hr></hr>
+                        <hr></hr>
                     </div>)
                 )}
             </div>
@@ -183,10 +183,10 @@ function Borrow(props) {
 function Loan(props) {
     function returnedItem(time, repaid) {
         if (repaid) {
-           return(time)
-        
+            return (<p className="text-center greenHighlight">Returned: {time}</p>)
+
         } else {
-            return null;
+            return <p className="text-center yellowHighlight">Item has not been returned</p>;
         }
     }
     if (props.loaned) {
@@ -195,23 +195,21 @@ function Loan(props) {
                 {props.loaned.slice(0).reverse().map(report => (
 
                     <div className="p-1">
-                    <div  key={report.createdAt}>
-                        <div >
-                            <h6>{report.store}</h6>
-                            <p className="mb-2 text-center text-danger">{report.item} to {report.borrowStore}</p>
-                            <p className="text-center"> Quantity: </p>
-                            <p className="text-center">Case: {report.case}</p>
-                            <p className="text-center">Bag: {report.bag}</p>
-                            <p className="text-center">Individual: {report.individual}</p>
-                            <hr></hr>
-                            <p className="text-center redcolor">Acknowledged: {JSON.stringify(report.acknowledged)}</p>
-                            <p className="text-center redcolor">Returned: {JSON.stringify(report.repaid)}</p>
-                            <p className="text-center">Repaid:  {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
-                            <hr></hr>
-                            <p className="text-center">Loaned by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                        <div key={report.createdAt}>
+                            <div >
+                                <h6>{report.store}</h6>
+                                <p className="mb-2 text-center text-danger bold">Loaned: {report.item} to {report.borrowStore}</p>
+                                <hr />
+                                <p className="text-center bold"> Quantity: </p>
+                                <p className="text-center">Case: {report.case}</p>
+                                <p className="text-center">Bag: {report.bag}</p>
+                                <p className="text-center">Individual: {report.individual}</p>
+                                <p className="text-center">Received Notification: {JSON.stringify(report.acknowledged)}</p>
+                                {returnedItem(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt))), report.repaid)}
+                                <p className="text-center bold">Loaned by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                            </div>
                         </div>
-                    </div>
-                    <hr></hr>
+                        <hr></hr>
                     </div>)
                 )}
             </div>

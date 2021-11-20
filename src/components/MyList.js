@@ -2,7 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css';
 import {
-    Col, Row, FormGroup, Input, Button, Collapse,
+    Col, Row, Button, Collapse,
     Navbar,
     NavbarToggler,
     NavbarBrand,
@@ -14,12 +14,12 @@ import {
     DropdownMenu,
     DropdownItem
 } from 'reactstrap';
-import { Card } from 'react-bootstrap';
 import 'animate.css';
 import { withRouter, Link } from "react-router-dom";
-import { faArrowAltCircleDown, faArrowAltCircleUp, faUserCircle, faClipboardList, faHistory } from '@fortawesome/free-solid-svg-icons'
+import { faUserCircle, faClipboardList } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import ReactTooltip from 'react-tooltip';
+import moment from 'moment';
 
 
 
@@ -31,6 +31,13 @@ class MyList extends React.Component {
         this.state = {
             username: localStorage.getItem('username'),
             isOpen: false,
+            history: [],
+            borrowed: [],
+            loaned: [],
+            historyOfBorrows: [],
+            numberOfBorrows: 0,
+            monthBorrow: [],
+
         }
     };
 
@@ -57,6 +64,40 @@ class MyList extends React.Component {
                 this.setState({ loaned: loaned })
                 console.log('Borrowed:', this.state.borrowed);
                 console.log('Loaned:', this.state.loaned);
+                const historyOfBorrows = history.filter(borrowed => borrowed.borrowStore === `${this.state.username}`);
+                this.setState({ historyOfBorrows: historyOfBorrows });
+                const numberOfBorrows = historyOfBorrows.length;
+                this.setState({ numberOfBorrows: numberOfBorrows })
+                const monthBorrow = historyOfBorrows.filter(report =>
+                    moment(new Date(report.createdAt)).isBefore(moment().subtract(30, 'days'))
+                );
+                this.setState({ monthBorrow: monthBorrow });
+
+                for (let i = 0; i < this.state.borrowed.length; i++) {
+                    window.fetch(`https://wenventurefeedback.herokuapp.com/borrow/${this.state.borrowed[i]._id}`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                credentials: "same-origin",
+                                Accept: "application/json, text/plain, */*",
+                                "Content-Type": "application/json",
+                                mode: "cors"
+                            },
+                            body: JSON.stringify({
+                                acknowledged: true,
+
+                            }),
+                        }).then(console.log())
+                        .then((result) => {
+                            return result.json();
+                        })
+                        .then((result) => {
+                            console.log('acknowledged!', result);
+                        })
+                        .catch((err) => {
+                            console.error('An error happened', err);
+                        })
+                }
 
             })
             .catch((err) => {
@@ -114,12 +155,15 @@ class MyList extends React.Component {
                         </Nav>
                     </Collapse>
                     <div className="text-end">
-                        <h5 className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        <ReactTooltip />
+                        <Link to="/">
+                            <h5 data-delay-show='500' data-background-color="#e64438" data-tip="Log Out" className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        </Link>
                     </div>
                 </Navbar>
                 <header>
                     <hr className="display-3" />
-                    
+
                     <h2 className="text-center animate__animated animate__fadeIn" ><FontAwesomeIcon className="mx-auto" icon={faClipboardList} /> My List</h2>
                     <hr className="display-3" />
                 </header>
@@ -128,7 +172,7 @@ class MyList extends React.Component {
                         <Col>
                             <h3 className="text-center">Borrowed</h3>
                             <hr />
-                            <Borrow borrowed={this.state.borrowed}/>
+                            <Borrow borrowed={this.state.borrowed} />
                         </Col>
                         <Col>
                             <h3 className="text-center">Loaned</h3>
@@ -138,6 +182,9 @@ class MyList extends React.Component {
                     </Row>
                 </div>
                 <footer>
+                    <hr />
+                    <h4 className="text-center gray">Number of borrows in past 30 days: {this.state.monthBorrow.length}</h4>
+                    <hr />
                     <p className="text-center mt-5 gray">2021 &copy; DevWilliams Software. All rights reserved.</p>
                 </footer>
             </div>
@@ -147,20 +194,20 @@ class MyList extends React.Component {
 
 function Borrow(props) {
     function payback(id) {
-        window.fetch(`https://wenventurefeedback.herokuapp.com/borrow/${id}`, 
-        {
-            method: "PUT",
-            headers: {
-                credentials: "same-origin",
-                Accept: "application/json, text/plain, */*",
-                "Content-Type": "application/json",
-                mode: "cors"
-            },
-            body: JSON.stringify({
-                repaid: true,
+        window.fetch(`https://wenventurefeedback.herokuapp.com/borrow/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    credentials: "same-origin",
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json",
+                    mode: "cors"
+                },
+                body: JSON.stringify({
+                    repaid: true,
 
-            }),
-        }).then(console.log())
+                }),
+            }).then(console.log())
             .then((result) => {
                 return result.json();
             })
@@ -170,8 +217,8 @@ function Borrow(props) {
             .catch((err) => {
                 console.error('An error happened', err);
             });
-            alert("Item was returned!");
-            window.location.reload();
+        alert("Item was returned!");
+        window.location.reload();
     }
 
     if (props.borrowed) {
@@ -181,6 +228,7 @@ function Borrow(props) {
                     <div className="p-1">
                         <div className="card" key={report.createdAt}>
                             <div className="card-body">
+                                {newIcon(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt))))}
                                 <h5 className="card-title">{report.store}</h5>
                                 <h5 className="card-subtitle text-center text-danger">I owe {report.item} to {report.loanStore}</h5>
                                 <h6> Quantity: </h6>
@@ -190,7 +238,8 @@ function Borrow(props) {
                                 <hr></hr>
                                 <h6 className="card-text">Acknowledged: {JSON.stringify(report.acknowledged)}</h6>
                                 <hr></hr>
-                                <p className="card-text">Borrowed by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                                <p className="card-text">Borrowed by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                                {Outstanding(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt))))}
                                 <Button className="mx-auto" onClick={() => payback(report._id)}>Item Was Returned</Button>
                             </div>
                         </div>
@@ -208,20 +257,20 @@ function Borrow(props) {
 
 function Loan(props) {
     function payback(id) {
-        window.fetch(`https://wenventurefeedback.herokuapp.com/borrow/${id}`, 
-        {
-            method: "PUT",
-            headers: {
-                credentials: "same-origin",
-                Accept: "application/json, text/plain, */*",
-                "Content-Type": "application/json",
-                mode: "cors"
-            },
-            body: JSON.stringify({
-                repaid: true,
+        window.fetch(`https://wenventurefeedback.herokuapp.com/borrow/${id}`,
+            {
+                method: "PUT",
+                headers: {
+                    credentials: "same-origin",
+                    Accept: "application/json, text/plain, */*",
+                    "Content-Type": "application/json",
+                    mode: "cors"
+                },
+                body: JSON.stringify({
+                    repaid: true,
 
-            }),
-        }).then(console.log())
+                }),
+            }).then(console.log())
             .then((result) => {
                 return result.json();
             })
@@ -231,8 +280,8 @@ function Loan(props) {
             .catch((err) => {
                 console.error('An error happened', err);
             });
-            alert("Repaid!");
-            window.location.reload();
+        alert("Repaid!");
+        window.location.reload();
     }
     if (props.loaned) {
         return (
@@ -241,7 +290,7 @@ function Loan(props) {
                     <div className="p-1">
                         <div className="card" key={report.createdAt}>
                             <div className="card-body">
-                            {newIcon(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.createdAt))))}
+                                {newIcon(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt))))}
                                 <h5 className="card-title">{report.store}</h5>
                                 <h5 className="card-subtitle text-center text-danger">{report.borrowStore} owes me {report.item}</h5>
                                 <h6> Quantity: </h6>
@@ -251,7 +300,8 @@ function Loan(props) {
                                 <hr></hr>
                                 <h6 className="card-text">Acknowledged: {JSON.stringify(report.acknowledged)}</h6>
                                 <hr></hr>
-                                <p className="card-text">Loaned by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit', hour: '2-digit', minute:'2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                                <p className="card-text">Loaned by {report.name} on {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt)))}</p>
+                                {Outstanding(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }).format(new Date(Date.parse(report.createdAt))))}
                                 <Button onClick={() => payback(report._id)}>Item Was Returned</Button>
                             </div>
                         </div>
@@ -269,11 +319,31 @@ function Loan(props) {
 
 function newIcon(date) {
     const datesAreOnSameDay = (first, second) =>
-    first.getFullYear() === second.getFullYear() &&
-    first.getMonth() === second.getMonth() &&
-    first.getDate() === second.getDate() || first.getDate() - second.getDate() === 2 || first.getDate() - second.getDate() === 3;
+        first.getFullYear() === second.getFullYear() &&
+        first.getMonth() === second.getMonth() &&
+        first.getDate() - second.getDate() <= 3;
     if (datesAreOnSameDay(new Date(), new Date(date)) === true) {
         return <img src='../images/new.png' alt="new" className="newIcon" />
     }
 }
+
+// function Outstanding(date) {
+//     const datesAreOnSameDay = (first, second) =>
+//         first.getFullYear() === second.getFullYear() &&
+//         first.getMonth() === second.getMonth() &&
+//         first.getDate() - second.getDate() < 13;
+//     if (datesAreOnSameDay(new Date(), new Date(date)) === true) {
+//         return <p className="text-danger text-center bold yellowHighlight">Return Time exceeded 2 weeks!</p>
+//     }
+// }
+
+function Outstanding(date) {
+
+    if (moment(new Date(date)) < moment().subtract(2, 'weeks')) {
+        return <p className="text-danger text-center bold yellowHighlight">Return time has exceeded 2 weeks!</p>
+    }
+}
+
+
+
 export default withRouter(MyList);

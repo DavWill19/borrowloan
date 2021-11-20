@@ -14,12 +14,11 @@ import {
     DropdownMenu,
     DropdownItem
 } from 'reactstrap';
-import { Card } from 'react-bootstrap';
 import 'animate.css';
 import { withRouter, Link } from "react-router-dom";
-import { faArrowAltCircleDown, faArrowCircleUp, faUserCircle, faClipboardList, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
+import { faArrowCircleUp, faUserCircle, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import ReactTooltip from 'react-tooltip';
 
 
 
@@ -35,9 +34,9 @@ class Loan extends React.Component {
             store: '',
             item: '',
             name: '',
-            case: '',
-            bag: '',
-            individual: '',
+            case: '0',
+            bag: '0',
+            individual: '0',
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -112,13 +111,23 @@ class Loan extends React.Component {
                     })
                     .then((result) => {
                         console.log('Form created successfully!', result);
+                        let myLoanNotification = () => {
+
+                            this.setState({ new: true });
+                            new window.Notification(`Loan Processed!`, {
+                                body: `You loaned ${this.state.item} to ${this.state.store}`,
+                                icon: ('../images/favicon.ico')
+                            }
+                            )
+                        }
+                        myLoanNotification();
+                        this.props.history.push('/loan');
+                        window.location.reload();
                     })
                     .catch((err) => {
-                        console.error('An error happened', err);
+                        alert('An error happenned! Please Try again!');
                     });
-                alert(`You loaned ${this.state.item} to ${this.state.store}`);
-                this.props.history.push('/loan');
-                window.location.reload();
+
             }, 650);
         } else {
             alert('Please fill in all fields');
@@ -172,12 +181,15 @@ class Loan extends React.Component {
                         </Nav>
                     </Collapse>
                     <div className="text-end">
-                        <h5 className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        <ReactTooltip />
+                        <Link to="/">
+                            <h5 data-delay-show='500' data-background-color="#e64438" data-tip="Log Out" className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        </Link>
                     </div>
                 </Navbar>
                 <header>
                     <hr className="display-3" />
-                    <h2 className="text-center animate__animated animate__fadeIn" ><FontAwesomeIcon className="gray" icon={faArrowCircleUp} /> Loan</h2>
+                    <h2 className="text-center animate__animated animate__fadeIn" ><FontAwesomeIcon className="greenColor" icon={faArrowCircleUp} /> Loan</h2>
                     <hr className="display-3" />
                 </header>
                 <Col className="halfWidth mx-auto shadow animate__animated animate__fadeIn">

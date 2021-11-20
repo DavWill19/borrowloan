@@ -13,14 +13,13 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
-    Label
 } from 'reactstrap';
-import { Card } from 'react-bootstrap';
+
 import 'animate.css';
 import { withRouter, Link } from "react-router-dom";
-import { faArrowCircleDown, faArrowAltCircleUp, faUserCircle, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
+import { faArrowCircleDown, faUserCircle, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import ReactTooltip from 'react-tooltip';
 
 
 
@@ -35,9 +34,9 @@ class Borrow extends React.Component {
             store: '',
             item: '',
             name: '',
-            case: '',
-            bag: '',
-            individual: '',
+            case: '0',
+            bag: '0',
+            individual: '0',
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -72,7 +71,7 @@ class Borrow extends React.Component {
 
         }
 
-        //   emailjs.send('service_qtwvw1r', 'template_lsafe65', templateParams, api_key)
+        //   emailjs.send('service_qtwvw1r', 't+emplate_lsafe65', templateParams, api_key)
         //     .then(function (response) {
         //       console.log('SUCCESS!', response.status, response.text);
         //     }, function (error) {
@@ -84,43 +83,52 @@ class Borrow extends React.Component {
             });
             setTimeout(() => {
                 e.preventDefault();
-            window.fetch('https://wenventurefeedback.herokuapp.com/borrow', {
-                method: "POST",
-                headers: {
-                    credentials: "same-origin",
-                    Accept: "application/json, text/plain, */*",
-                    "Content-Type": "application/json",
-                    mode: "cors"
-                },
-                body: JSON.stringify({
-                    borrowStore: `${this.state.username}`,
-                    name: `${this.state.name}`,
-                    loanStore: `${this.state.store}`,
-                    acknowledged: false,
-                    item: `${this.state.item}`,
-                    case: `${this.state.case}`,
-                    bag: `${this.state.bag}`,
-                    individual: `${this.state.individual}`
+                window.fetch('https://wenventurefeedback.herokuapp.com/borrow', {
+                    method: "POST",
+                    headers: {
+                        credentials: "same-origin",
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json",
+                        mode: "cors"
+                    },
+                    body: JSON.stringify({
+                        borrowStore: `${this.state.username}`,
+                        name: `${this.state.name}`,
+                        loanStore: `${this.state.store}`,
+                        acknowledged: false,
+                        item: `${this.state.item}`,
+                        case: `${this.state.case}`,
+                        bag: `${this.state.bag}`,
+                        individual: `${this.state.individual}`
 
-                }),
-            }).then(console.log())
-                .then((result) => {
-                    return result.json();
-                })
-                .then((result) => {
-                    console.log('Form created successfully!', result);
-                })
-                .catch((err) => {
-                    console.error('An error happened', err);
-                });
-            alert(`You borrowed ${this.state.item} from ${this.state.store}` );
-            this.props.history.push('/borrow');
-            window.location.reload();
-        }, 650);
-    } else {
-        alert('Please fill in all fields');
+                    }),
+                }).then(console.log())
+                    .then((result) => {
+                        return result.json();
+                    })
+                    .then((result) => {
+                        console.log('Form created successfully!', result);
+                        let myLoanNotification = () => {
+
+                            this.setState({ new: true });
+                            new window.Notification(`Borrow Processed!`, {
+                                body: `You borrowed ${this.state.item} from ${this.state.store}`,
+                                icon: ('../images/favicon.ico')
+                            }
+                            )
+                        }
+                        myLoanNotification();
+                        this.props.history.push('/borrow');
+                        window.location.reload();
+                    })
+                    .catch((err) => {
+                        alert('An error happenned! Please Try again!');
+                    });
+            }, 650);
+        } else {
+            alert('Please fill in all fields');
+        }
     }
-}
 
     render() {
         return (
@@ -168,12 +176,15 @@ class Borrow extends React.Component {
                         </Nav>
                     </Collapse>
                     <div className="text-end">
-                        <h5 className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        <ReactTooltip />
+                        <Link to="/">
+                            <h5 data-delay-show='500' data-background-color="#e64438" data-tip="Log Out" className="text-right p-3 user gray"><FontAwesomeIcon className="gray" icon={faUserCircle} /> {this.state.username}</h5>
+                        </Link>
                     </div>
                 </Navbar>
                 <header>
                     <hr className="display-3" />
-                    <h2 className="text-center animate__animated animate__fadeIn" ><FontAwesomeIcon className="gray" icon={faArrowCircleDown} /> Borrow</h2>
+                    <h2 className="text-center animate__animated animate__fadeIn " ><FontAwesomeIcon className="redColor" icon={faArrowCircleDown} /> Borrow</h2>
                     <hr className="display-3" />
                 </header>
                 <Col className="halfWidth mx-auto shadow animate__animated animate__fadeIn">

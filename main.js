@@ -1,11 +1,11 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, Tray, nativeImage} = require('electron')
+const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
 
 let window, tray
 
-function createWindow () {
+function createWindow() {
   // Create the browser window.
   window = new BrowserWindow({
     width: 1270,
@@ -36,7 +36,7 @@ function createWindow () {
 
 // const createTray = () => {
 //     tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'assets/icon.png')))
-    
+
 //     tray.on('click', () => {
 //         if (window.isVisible()) {
 //         window.hide()
@@ -51,7 +51,7 @@ function createWindow () {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
-    // createTray()
+  // createTray()
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
